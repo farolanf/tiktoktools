@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "TikTok Tools",
+    "version": "1.0.0",
+    "permissions": ["tts"],
+    "content_scripts": [
+        {
+            "matches": ["*://*/*"],
+            "js": ["src/content.js"]
+        }
+    ]
+}
