@@ -1,9 +1,9 @@
-function observeChat(container) {
-  const observer = new MutationObserver(function (mutationList, observer) {});
-  observer.observe(container);
-}
+// function observeChat(container) {
+//   const observer = new MutationObserver(function (mutationList, observer) {});
+//   observer.observe(container);
+// }
 
-observeChat(document.getElementById('some-chat-container'));
+// observeChat(document.getElementById('some-chat-container'));
 
 // chrome.runtime.onMessage.addListener(function (message) {
 //   if (!message?.type) return;

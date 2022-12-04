@@ -1,3 +1,6 @@
+import { MessageType } from '../constants';
+import { sendMessage } from './message';
+
 export function say(text: string) {
-  chrome.runtime.sendMessage({ type: 'speech', text });
+  sendMessage({ type: MessageType.Speech, text });
 }

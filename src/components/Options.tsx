@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { say } from '../lib/speech';
+import { MessageType } from '../constants';
+import { sendMessage } from '../lib/message';
+import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 const Container = styled.div`
   padding: 8px;
@@ -10,32 +14,47 @@ const Container = styled.div`
   align-items: start;
 `;
 
-const Button = styled.button`
-  padding: 6px 20px;
-  background: gray;
-  color: white;
+const DropdownMenu = styled(Dropdown.Menu)`
+  max-height: 600px;
+  overflow: hidden auto;
 `;
 
 export default function Options() {
-  const [voices, setVoices] = useState<chrome.tts.TtsVoice[]>();
+  const [voices, setVoices] = useState<chrome.tts.TtsVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState('');
 
   useEffect(() => {
-    chrome.runtime.sendMessage({ type: 'getVoices' }).then((response) => {
+    sendMessage({ type: MessageType.GetVoices }).then((response) => {
       setVoices(response.voices);
     });
   }, []);
 
   const sayTest = () => {
+    console.log('sayTest');
     say('terima kasih jenny atas hadiah mawarnya!');
   };
 
   return (
     <Container>
-      <Button onClick={sayTest}>Say it</Button>
+      <Button variant="primary" onClick={sayTest}>
+        Say it
+      </Button>
       <h2>Voices</h2>
-      {voices?.map((voice) => (
-        <div key={voice.voiceName}>Voice: {voice.voiceName}</div>
-      ))}
+      <Dropdown>
+        <Dropdown.Toggle>
+          {selectedVoice || '-- Select voice --'}
+        </Dropdown.Toggle>
+        <DropdownMenu>
+          {voices.map((voice) => (
+            <Dropdown.Item
+              key={voice.voiceName}
+              onClick={() => setSelectedVoice(voice.voiceName!)}
+            >
+              {voice.voiceName}
+            </Dropdown.Item>
+          ))}
+        </DropdownMenu>
+      </Dropdown>
     </Container>
   );
 }
