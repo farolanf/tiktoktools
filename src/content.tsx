@@ -1,28 +1,19 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './components/App';
+function observeChat(container) {
+  const observer = new MutationObserver(function (mutationList, observer) {});
+  observer.observe(container);
+}
 
-const rootEl = document.createElement('div');
-rootEl.id = 'tiktoktools-root';
-rootEl.style.position = 'fixed';
-rootEl.style.top = '0';
-rootEl.style.left = '0';
-rootEl.style.zIndex = '10000';
-document.body.append(rootEl);
+observeChat(document.getElementById('some-chat-container'));
 
-const root = createRoot(rootEl);
-root.render(<App />);
+// chrome.runtime.onMessage.addListener(function (message) {
+//   if (!message?.type) return;
+//   switch (message.type) {
+//     case 'voices':
+//       console.log('voices', message.voices);
+//       break;
+//   }
+// });
 
-chrome.runtime.onMessage.addListener(function (message) {
-  if (!message?.type) return;
-  switch (message.type) {
-    case 'voices':
-      console.log('voices', message.voices);
-      break;
-  }
-});
-
-window.addEventListener('load', () => {
-  console.log('tiktoktools onload');
-  // chrome.runtime.sendMessage({ type: 'getVoices' });
-});
+// window.addEventListener('load', () => {
+//   chrome.runtime.sendMessage({ type: 'getVoices' });
+// });

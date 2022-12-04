@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (!message?.type) return;
-  switch (message.type) {
+  switch (message?.type) {
     case 'speech':
       chrome.tts.speak(message.text, {
         lang: 'id-ID',
@@ -8,11 +7,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       });
       break;
     case 'getVoices':
-      chrome.tts.getVoices(function (voices) {
-        sendResponse({ type: 'voices', voices });
+      chrome.tts.getVoices().then((voices) => {
+        sendResponse({ voices });
       });
       break;
     default:
       console.error('Unknown message', message);
   }
+  return true;
 });
