@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "parcel watch manifest.json --config @parcel/config-webextension --host localhost",
     "build": "parcel build manifest.json --config @parcel/config-webextension",
+    "prettier": "prettier src --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Farolan Faisal <farolanfaisal@gmail.com>",
@@ -14,6 +15,12 @@
     "@parcel/config-webextension": "^2.8.0",
     "@types/chrome": "^0.0.203",
     "parcel": "^2.8.0",
-    "prettier": "^2.8.0"
+    "prettier": "^2.8.0",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.6"
   }
 }

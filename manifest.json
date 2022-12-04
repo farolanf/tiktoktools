@@ -1,15 +1,15 @@
 {
-    "manifest_version": 3,
-    "name": "TikTok Tools",
-    "version": "1.0.0",
-    "permissions": ["tts"],
-    "background": {
-      "service_worker": "src/background.ts"
-    },
-    "content_scripts": [
-        {
-            "matches": ["*://*/*"],
-            "js": ["src/content.ts"]
-        }
-    ]
+  "manifest_version": 3,
+  "name": "TikTok Tools",
+  "version": "1.0.0",
+  "permissions": ["tts"],
+  "background": {
+    "service_worker": "src/background.ts"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["src/content.tsx"]
+    }
+  ]
 }
