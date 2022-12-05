@@ -1,13 +1,16 @@
 export interface Config {
   voiceNames: string[];
+  sayVoiceName: string;
 }
 
 export interface PatchConfig {
   voiceNames?: string[];
+  sayVoiceName?: string;
 }
 
 export const defaultConfig: Config = {
   voiceNames: ['Microsoft Gadis Online (Natural) - Indonesian (Indonesia)'],
+  sayVoiceName: 'Microsoft Gadis Online (Natural) - Indonesian (Indonesia)',
 };
 
 export async function getConfig(): Promise<Config> {

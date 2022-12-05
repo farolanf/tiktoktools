@@ -8,7 +8,7 @@ import { MessageType } from '../constants';
 import { sendMessage } from '../lib/message';
 import { getConfig, updateConfig, defaultConfig } from '../lib/config';
 import Stack from 'react-bootstrap/Stack';
-import Form from 'react-bootstrap/Form';
+import BsForm from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 const Container = styled.div`
@@ -16,6 +16,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;
+`;
+
+const Form = styled(BsForm)`
+  width: 800px;
 `;
 
 const VoiceRow = styled.div`
@@ -43,7 +47,9 @@ export default function Options() {
       editMode: boolean;
     }[]
   >(defaultConfig.voiceNames.map((_v) => ({ editMode: false })));
-  const [sayVoiceName, setSayVoiceName] = useState<string>();
+  const [randomVoiceText, setRandomVoiceText] = useState(
+    'Terima kasih Jenny atas hadiah mawarnya!'
+  );
   const [sayText, setSayText] = useState('Halo, apa kabar?');
 
   const countryName = (code): string =>
@@ -94,12 +100,11 @@ export default function Options() {
     );
   }, [config.voiceNames]);
 
-  const onTestVoice = (voiceName?: string) => () => {
-    say('terima kasih jenny atas hadiah mawarnya!', voiceName);
-  };
+  const testVoice = (voiceName?: string) => say(randomVoiceText, voiceName);
 
-  const onSayText = (text: string, voiceName?: string) => () => {
-    say(text, voiceName || sample(voices)?.voiceName);
+  const onTestRandomVoice = (e) => {
+    e.preventDefault();
+    testVoice();
   };
 
   const onEditVoice = (i: number) => () => {
@@ -140,6 +145,19 @@ export default function Options() {
     });
   };
 
+  const onUpdateSayVoiceName = (sayVoiceName) => {
+    setConfig({
+      ...config,
+      sayVoiceName,
+    });
+  };
+
+  const onSayIt = (e) => {
+    e.preventDefault();
+    const voiceName = config.sayVoiceName || sample(voices)?.voiceName;
+    say(sayText, voiceName);
+  };
+
   const renderVoiceRow = (voiceName, i) => (
     <VoiceRow key={i} className="mb-2">
       <Form.Select
@@ -159,7 +177,7 @@ export default function Options() {
         type="button"
         variant="outline-primary"
         className="ms-1"
-        onClick={onTestVoice(voiceName)}
+        onClick={() => testVoice(voiceName)}
       >
         Test
       </TestButton>
@@ -203,26 +221,33 @@ export default function Options() {
             </div>
           </Stack>
         </Form.Group>
+      </Form>
+      <Form onSubmit={onTestRandomVoice}>
         <Form.Group controlId="formGroupVoiceTest" className="mb-3">
           <Form.Label>Test Voices</Form.Label>
+          <Form.Control
+            type="text"
+            className="mb-2"
+            value={randomVoiceText}
+            onChange={(e) => setRandomVoiceText(e.target.value)}
+            onFocus={(e) => {
+              e.target.setSelectionRange(0, e.target.value.length);
+            }}
+          />
           <Stack gap={2} className="align-items-start">
-            <Button type="button" variant="primary" onClick={onTestVoice()}>
+            <Button type="submit" variant="primary">
               Test Ramdom Voice
             </Button>
           </Stack>
         </Form.Group>
+      </Form>
+      <Form onSubmit={onSayIt}>
         <Form.Group controlId="formGroupSayText" className="mb-3">
           <Form.Label>Say Text</Form.Label>
-          <Form.Control
-            type="text"
-            className="mb-2"
-            value={sayText}
-            onChange={(e) => setSayText(e.target.value)}
-          />
           <Form.Select
-            value={sayVoiceName}
+            value={config.sayVoiceName}
             className="mb-2"
-            onChange={(e) => setSayVoiceName(e.target.value)}
+            onChange={(e) => onUpdateSayVoiceName(e.target.value)}
           >
             <option>Random Voice</option>
             {voices.map((voice) => (
@@ -231,12 +256,17 @@ export default function Options() {
               </option>
             ))}
           </Form.Select>
+          <Form.Control
+            type="text"
+            className="mb-2"
+            value={sayText}
+            onChange={(e) => setSayText(e.target.value)}
+            onFocus={(e) => {
+              e.target.setSelectionRange(0, e.target.value.length);
+            }}
+          />
           <Stack gap={2} className="align-items-start">
-            <Button
-              type="button"
-              variant="primary"
-              onClick={onSayText(sayText, sayVoiceName)}
-            >
+            <Button type="submit" variant="primary">
               Say It
             </Button>
           </Stack>

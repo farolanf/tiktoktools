@@ -36,7 +36,7 @@ function randomPitch() {
 }
 
 function randomRate() {
-  return 1 + Math.random() * 0.3;
+  return 1.1 + Math.random() * 0.2;
 }
 
 function randomVoice() {
