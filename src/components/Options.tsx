@@ -1,5 +1,6 @@
 import uniq from 'lodash/uniq';
 import sortBy from 'lodash/sortBy';
+import sample from 'lodash/sample';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { say } from '../lib/speech';
@@ -42,9 +43,11 @@ export default function Options() {
       editMode: boolean;
     }[]
   >(defaultConfig.voiceNames.map((_v) => ({ editMode: false })));
+  const [sayVoiceName, setSayVoiceName] = useState<string>();
+  const [sayText, setSayText] = useState('Halo, apa kabar?');
 
-  const countryName = (code) =>
-    new Intl.DisplayNames(['en'], { type: 'region' }).of(code);
+  const countryName = (code): string =>
+    new Intl.DisplayNames(['en'], { type: 'region' }).of(code)!;
 
   useEffect(() => {
     sendMessage({ type: MessageType.GetVoices }).then((response) => {
@@ -93,6 +96,10 @@ export default function Options() {
 
   const onTestVoice = (voiceName?: string) => () => {
     say('terima kasih jenny atas hadiah mawarnya!', voiceName);
+  };
+
+  const onSayText = (text: string, voiceName?: string) => () => {
+    say(text, voiceName || sample(voices)?.voiceName);
   };
 
   const onEditVoice = (i: number) => () => {
@@ -201,6 +208,36 @@ export default function Options() {
           <Stack gap={2} className="align-items-start">
             <Button type="button" variant="primary" onClick={onTestVoice()}>
               Test Ramdom Voice
+            </Button>
+          </Stack>
+        </Form.Group>
+        <Form.Group controlId="formGroupSayText" className="mb-3">
+          <Form.Label>Say Text</Form.Label>
+          <Form.Control
+            type="text"
+            className="mb-2"
+            value={sayText}
+            onChange={(e) => setSayText(e.target.value)}
+          />
+          <Form.Select
+            value={sayVoiceName}
+            className="mb-2"
+            onChange={(e) => setSayVoiceName(e.target.value)}
+          >
+            <option>Random Voice</option>
+            {voices.map((voice) => (
+              <option key={voice.voiceName} value={voice.voiceName}>
+                {voice.voiceName} {voice.lang}
+              </option>
+            ))}
+          </Form.Select>
+          <Stack gap={2} className="align-items-start">
+            <Button
+              type="button"
+              variant="primary"
+              onClick={onSayText(sayText, sayVoiceName)}
+            >
+              Say It
             </Button>
           </Stack>
         </Form.Group>
