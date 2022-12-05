@@ -11,11 +11,8 @@ import Stack from 'react-bootstrap/Stack';
 import BsForm from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-const Container = styled.div`
+const Container = styled(Stack)`
   padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
 `;
 
 const Form = styled(BsForm)`
@@ -193,7 +190,7 @@ export default function Options() {
   );
 
   return (
-    <Container>
+    <Container gap={3} className="align-items-start">
       <Form>
         <Form.Group controlId="formGroupVoice" className="mb-3">
           <Form.Label>Voices</Form.Label>
@@ -272,6 +269,21 @@ export default function Options() {
           </Stack>
         </Form.Group>
       </Form>
+      <Form.Group controlId="formGroupVolume">
+        <Form.Label>Volume</Form.Label>
+        <Stack direction="horizontal">
+          <Form.Range
+            min="0"
+            max="1000"
+            value={Math.floor(config.volume * 1000)}
+            onChange={(e) =>
+              setConfig({ ...config, volume: e.target.value / 1000 })
+            }
+            style={{ width: 300 }}
+          />
+          <span className="ms-1">{Math.floor(config.volume * 100)}</span>
+        </Stack>
+      </Form.Group>
     </Container>
   );
 }

@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         voiceName: message.voiceName || randomVoice(),
         pitch,
         rate,
+        volume: config.volume,
       });
       break;
     case MessageType.GetVoices:
