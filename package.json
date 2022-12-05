@@ -24,10 +24,12 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
+    "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "typescript": "^4.9.3"
   }
 }

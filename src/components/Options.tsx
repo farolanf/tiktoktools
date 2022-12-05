@@ -4,8 +4,7 @@ import sample from 'lodash/sample';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { say } from '../lib/speech';
-import { MessageType } from '../constants';
-import { sendMessage } from '../lib/message';
+import { MessageType, LiveEventType, sendMessage } from '../lib/message';
 import { getConfig, updateConfig, defaultConfig } from '../lib/config';
 import Stack from 'react-bootstrap/Stack';
 import BsForm from 'react-bootstrap/Form';
@@ -53,7 +52,7 @@ export default function Options() {
     new Intl.DisplayNames(['en'], { type: 'region' }).of(code)!;
 
   useEffect(() => {
-    sendMessage({ type: MessageType.GetVoices }).then((response) => {
+    sendMessage({ type: MessageType.GET_VOICES }).then((response) => {
       setVoices(response.voices);
     });
     getConfig().then((result) => setConfig(result));
@@ -85,7 +84,7 @@ export default function Options() {
 
   useEffect(() => {
     updateConfig(config).then(() => {
-      sendMessage({ type: MessageType.ReloadConfig });
+      sendMessage({ type: MessageType.RELOAD_CONFIG });
     });
   }, [config]);
 
@@ -119,7 +118,6 @@ export default function Options() {
   const onChangeVoice = (i, voiceName) => {
     const voiceNames = config.voiceNames.slice();
     voiceNames[i] = voiceName;
-    console.log('set voice', voiceName);
     setConfig({
       ...config,
       voiceNames,
@@ -153,6 +151,23 @@ export default function Options() {
     e.preventDefault();
     const voiceName = config.sayVoiceName || sample(voices)?.voiceName;
     say(sayText, voiceName);
+  };
+
+  const onAddLike = () => {
+    sendMessage({
+      type: MessageType.LIVE_EVENT,
+      eventType: LiveEventType.LIKE,
+      username: 'jenny',
+    });
+  };
+
+  const onAddRose = () => {
+    sendMessage({
+      type: MessageType.LIVE_EVENT,
+      eventType: LiveEventType.GIFT,
+      username: 'jenny',
+      gift: 'rose',
+    });
   };
 
   const renderVoiceRow = (voiceName, i) => (
@@ -282,6 +297,17 @@ export default function Options() {
             style={{ width: 300 }}
           />
           <span className="ms-1">{Math.floor(config.volume * 100)}</span>
+        </Stack>
+      </Form.Group>
+      <Form.Group controlId="formGroupLiveEventTest">
+        <Form.Label>Live Event Test</Form.Label>
+        <Stack gap={1}>
+          <Button type="button" variant="outline-secondary" onClick={onAddLike}>
+            Add Like
+          </Button>
+          <Button type="button" variant="outline-secondary" onClick={onAddRose}>
+            Add Rose
+          </Button>
         </Stack>
       </Form.Group>
     </Container>
