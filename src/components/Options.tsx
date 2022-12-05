@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { say } from '../lib/speech';
 import { MessageType } from '../constants';
 import { sendMessage } from '../lib/message';
+import { getConfig, updateConfig, defaultConfig } from '../lib/config';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 
@@ -20,18 +21,28 @@ const DropdownMenu = styled(Dropdown.Menu)`
 `;
 
 export default function Options() {
+  const [config, setConfig] = useState(defaultConfig);
   const [voices, setVoices] = useState<chrome.tts.TtsVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState('');
 
   useEffect(() => {
     sendMessage({ type: MessageType.GetVoices }).then((response) => {
       setVoices(response.voices);
     });
+    getConfig().then((result) => setConfig(result));
   }, []);
 
+  useEffect(() => {
+    updateConfig(config).then(() => {
+      sendMessage({ type: MessageType.ReloadConfig });
+    });
+  }, [config]);
+
   const sayTest = () => {
-    console.log('sayTest');
     say('terima kasih jenny atas hadiah mawarnya!');
+  };
+
+  const onClickVoice = (voice) => async () => {
+    setConfig({ ...config, voiceName: voice.voiceName });
   };
 
   return (
@@ -41,14 +52,13 @@ export default function Options() {
       </Button>
       <h2>Voices</h2>
       <Dropdown>
-        <Dropdown.Toggle>
-          {selectedVoice || '-- Select voice --'}
-        </Dropdown.Toggle>
+        <Dropdown.Toggle>{config.voiceName}</Dropdown.Toggle>
         <DropdownMenu>
           {voices.map((voice) => (
             <Dropdown.Item
               key={voice.voiceName}
-              onClick={() => setSelectedVoice(voice.voiceName!)}
+              active={voice.voiceName === config.voiceName}
+              onClick={onClickVoice(voice)}
             >
               {voice.voiceName}
             </Dropdown.Item>

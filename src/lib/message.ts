@@ -1,15 +1,15 @@
 import { MessageType } from '../constants';
 
-interface MessageBase {
-  type: MessageType;
-}
-
-interface SpeechMessage extends MessageBase {
+interface SpeechMessage {
   type: MessageType.Speech;
   text: string;
 }
 
-interface GetVoicesMessage extends MessageBase {
+interface ReloadConfigMessage {
+  type: MessageType.ReloadConfig;
+}
+
+interface GetVoicesMessage {
   type: MessageType.GetVoices;
 }
 
@@ -18,6 +18,7 @@ interface GetVoicesResponse {
 }
 
 export function sendMessage(message: SpeechMessage): Promise<void>;
+export function sendMessage(message: ReloadConfigMessage): Promise<void>;
 
 export function sendMessage(
   message: GetVoicesMessage
