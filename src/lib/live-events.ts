@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import sortBy from 'lodash/sortBy';
+import cloneDeep from 'lodash/cloneDeep';
 import { LiveEventType, LiveEventMessage } from './message';
 
 export class Gift {
@@ -18,6 +19,12 @@ export class Gift {
     this.count++;
     this.totalCoins += this.coins;
   }
+
+  subtract(other: Gift) {
+    invariant(this.id === other.id, 'Invalid id');
+    this.count -= other.count;
+    this.totalCoins -= other.totalCoins;
+  }
 }
 
 export class Gifts {
@@ -31,6 +38,14 @@ export class Gifts {
       const gift = new Gift(id);
       this.gifts.set(id, gift);
     }
+  }
+
+  subtract(other: Gifts) {
+    this.gifts.forEach((gift) => {
+      if (!other.gifts.has(gift.id)) return;
+      const otherGift = other.gifts.get(gift.id);
+      gift.subtract(otherGift);
+    });
   }
 }
 
@@ -52,6 +67,16 @@ export class LiveEvent {
     } else if (msg.eventType === LiveEventType.GIFT) {
       this.gifts.add(msg.gift);
     }
+  }
+
+  subtract(other: LiveEvent) {
+    invariant(other.username === this.username, 'Invalid username');
+    this.likeCount -= other.likeCount;
+    this.gifts.subtract(other.gifts);
+  }
+
+  clone() {
+    return cloneDeep(this);
   }
 }
 

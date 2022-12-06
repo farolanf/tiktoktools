@@ -41,23 +41,14 @@ describe('live events', () => {
   });
   describe('LiveEvent', () => {
     test('like - initial value', () => {
-      const msg: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jenny',
-      };
+      const msg = likeMessage('jenny');
       const liveEvent = new LiveEvent(msg);
       expect(liveEvent.username).toBe('jenny');
       expect(liveEvent.likeCount).toBe(1);
       expect(liveEvent.gifts.gifts.size).toBe(0);
     });
     test('gift - initial value', () => {
-      const msg: LiveEventGiftMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.GIFT,
-        username: 'jenny',
-        gift: 'rose',
-      };
+      const msg = giftMessage('jenny', 'rose');
       const liveEvent = new LiveEvent(msg);
       expect(liveEvent.username).toBe('jenny');
       expect(liveEvent.likeCount).toBe(0);
@@ -65,17 +56,8 @@ describe('live events', () => {
       expect(liveEvent.gifts.gifts.has('rose')).toBeTruthy();
     });
     test('add', () => {
-      const likeMsg: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jenny',
-      };
-      const giftMsg: LiveEventGiftMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.GIFT,
-        username: 'jenny',
-        gift: 'rose',
-      };
+      const likeMsg = likeMessage('jenny');
+      const giftMsg = giftMessage('jenny', 'rose');
       const liveEvent = new LiveEvent(likeMsg);
       liveEvent.add(giftMsg);
       expect(liveEvent.username).toBe('jenny');
@@ -84,36 +66,36 @@ describe('live events', () => {
       expect(liveEvent.gifts.gifts.has('rose')).toBeTruthy();
     });
     test('add throws', () => {
-      const likeMsg: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jenny',
-      };
-      const giftMsg: LiveEventGiftMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.GIFT,
-        username: 'jan',
-        gift: 'rose',
-      };
+      const likeMsg = likeMessage('jenny');
+      const giftMsg = giftMessage('jan', 'rose');
       const liveEvent = new LiveEvent(likeMsg);
       expect(() => liveEvent.add(giftMsg)).toThrow(
         'Invariant failed: Invalid username'
       );
     });
+    test('subtract', () => {
+      const jennyLike = likeMessage('jenny');
+      const jennyGiftRose = giftMessage('jenny', 'rose');
+      const jennyGiftCar = giftMessage('jenny', 'car');
+      const liveEvent = new LiveEvent(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      const clone = liveEvent.clone();
+      liveEvent.add(jennyLike);
+      liveEvent.add(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      liveEvent.add(jennyGiftRose);
+      liveEvent.add(jennyGiftCar);
+      liveEvent.subtract(clone);
+      expect(liveEvent.likeCount).toBe(2);
+      expect(liveEvent.gifts.gifts.size).toBe(2);
+      expect(liveEvent.gifts.gifts.get('rose').count).toBe(2);
+      expect(liveEvent.gifts.gifts.get('car').count).toBe(1);
+    });
   });
   describe('LiveEvents', () => {
     test('add', () => {
-      const likeMsg: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jenny',
-      };
-      const giftMsg: LiveEventGiftMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.GIFT,
-        username: 'jan',
-        gift: 'rose',
-      };
+      const likeMsg = likeMessage('jenny');
+      const giftMsg = giftMessage('jan', 'rose');
       const liveEvents = new LiveEvents();
       liveEvents.add(likeMsg);
       liveEvents.add(giftMsg);
@@ -137,16 +119,8 @@ describe('live events', () => {
       expect(liveEvents.find('jan').gifts.gifts.get('rose').count).toBe(2);
     });
     test('add sorted', async () => {
-      const msg1: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jenny',
-      };
-      const msg2: LiveEventLikeMessage = {
-        type: MessageType.LIVE_EVENT,
-        eventType: LiveEventType.LIKE,
-        username: 'jan',
-      };
+      const msg1 = likeMessage('jenny');
+      const msg2 = likeMessage('jan');
       const liveEvents = new LiveEvents();
       liveEvents.add(msg1);
       await new Promise((r) => setTimeout(r, 1));
@@ -156,3 +130,20 @@ describe('live events', () => {
     });
   });
 });
+
+function likeMessage(username: string): LiveEventLikeMessage {
+  return {
+    type: MessageType.LIVE_EVENT,
+    eventType: LiveEventType.LIKE,
+    username,
+  };
+}
+
+function giftMessage(username: string, gift: string): LiveEventGiftMessage {
+  return {
+    type: MessageType.LIVE_EVENT,
+    eventType: LiveEventType.GIFT,
+    username,
+    gift,
+  };
+}
