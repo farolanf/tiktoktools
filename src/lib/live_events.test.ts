@@ -91,6 +91,35 @@ describe('live events', () => {
       expect(liveEvent.gifts.gifts.get('rose').count).toBe(2);
       expect(liveEvent.gifts.gifts.get('car').count).toBe(1);
     });
+    test('isEmpty returns true', () => {
+      const jennyLike = likeMessage('jenny');
+      const jennyGiftRose = giftMessage('jenny', 'rose');
+      const liveEvent = new LiveEvent(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      const clone = liveEvent.clone();
+      liveEvent.subtract(clone);
+      expect(liveEvent.isEmpty()).toBeTruthy();
+    });
+    test('isEmpty returns false', () => {
+      const jennyLike = likeMessage('jenny');
+      const jennyGiftRose = giftMessage('jenny', 'rose');
+      const liveEvent = new LiveEvent(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      const clone = liveEvent.clone();
+      liveEvent.add(jennyGiftRose);
+      liveEvent.subtract(clone);
+      expect(liveEvent.isEmpty()).toBeFalsy();
+    });
+    test('totalCoins', () => {
+      const jennyLike = likeMessage('jenny');
+      const jennyGiftRose = giftMessage('jenny', 'rose');
+      const liveEvent = new LiveEvent(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      liveEvent.add(jennyGiftRose);
+      liveEvent.add(jennyLike);
+      liveEvent.add(jennyGiftRose);
+      expect(liveEvent.gifts.totalCoins).toBe(3);
+    });
   });
   describe('LiveEvents', () => {
     test('add', () => {

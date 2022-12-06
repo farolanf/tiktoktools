@@ -25,10 +25,20 @@ export class Gift {
     this.count -= other.count;
     this.totalCoins -= other.totalCoins;
   }
+
+  isEmpty(): boolean {
+    return !this.count && !this.totalCoins;
+  }
 }
 
 export class Gifts {
   gifts = new Map<string, Gift>();
+
+  get totalCoins() {
+    let sum = 0;
+    this.gifts.forEach((gift) => (sum += gift.totalCoins));
+    return sum;
+  }
 
   add(id: string) {
     if (this.gifts.has(id)) {
@@ -46,6 +56,10 @@ export class Gifts {
       const otherGift = other.gifts.get(gift.id);
       gift.subtract(otherGift);
     });
+  }
+
+  isEmpty(): boolean {
+    return !Array.from(this.gifts).find(([_key, gift]) => !gift.isEmpty());
   }
 }
 
@@ -73,6 +87,10 @@ export class LiveEvent {
     invariant(other.username === this.username, 'Invalid username');
     this.likeCount -= other.likeCount;
     this.gifts.subtract(other.gifts);
+  }
+
+  isEmpty(): boolean {
+    return !this.likeCount && this.gifts.isEmpty();
   }
 
   clone() {
