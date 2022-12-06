@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant';
+import sortBy from 'lodash/sortBy';
 import { LiveEventType, LiveEventMessage } from './message';
 
 export class Gift {
@@ -37,6 +38,7 @@ export class LiveEvent {
   username: string;
   likeCount: number = 0;
   gifts = new Gifts();
+  timestamp: number = Date.now();
 
   constructor(msg: LiveEventMessage) {
     this.username = msg.username;
@@ -54,16 +56,24 @@ export class LiveEvent {
 }
 
 export class LiveEvents {
-  liveEvents = new Map<string, LiveEvent>();
+  liveEvents: LiveEvent[] = [];
 
   add(msg: LiveEventMessage) {
-    if (this.liveEvents.has(msg.username)) {
-      const liveEvent = this.liveEvents.get(msg.username)!;
+    let liveEvent = this.find(msg.username);
+    if (liveEvent) {
       liveEvent.add(msg);
     } else {
-      const liveEvent = new LiveEvent(msg);
-      this.liveEvents.set(liveEvent.username, liveEvent);
+      liveEvent = new LiveEvent(msg);
+      this.liveEvents.push(liveEvent);
+      this.liveEvents = sortBy(
+        this.liveEvents,
+        (liveEvent) => liveEvent.timestamp
+      );
     }
+  }
+
+  find(username: string) {
+    return this.liveEvents.find((liveEvent) => liveEvent.username === username);
   }
 }
 

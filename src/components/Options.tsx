@@ -301,7 +301,7 @@ export default function Options() {
       </Form.Group>
       <Form.Group controlId="formGroupLiveEventTest">
         <Form.Label>Live Event Test</Form.Label>
-        <Stack gap={1}>
+        <Stack gap={2}>
           <Button type="button" variant="outline-secondary" onClick={onAddLike}>
             Add Like
           </Button>

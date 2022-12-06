@@ -117,30 +117,42 @@ describe('live events', () => {
       const liveEvents = new LiveEvents();
       liveEvents.add(likeMsg);
       liveEvents.add(giftMsg);
-      expect(liveEvents.liveEvents.size).toBe(2);
-      expect(liveEvents.liveEvents.has('jenny')).toBeTruthy();
-      expect(liveEvents.liveEvents.get('jenny').likeCount).toBe(1);
-      expect(liveEvents.liveEvents.get('jenny').gifts.gifts.size).toBe(0);
-      expect(liveEvents.liveEvents.has('jan')).toBeTruthy();
-      expect(liveEvents.liveEvents.get('jan').likeCount).toBe(0);
-      expect(liveEvents.liveEvents.get('jan').gifts.gifts.size).toBe(1);
-      expect(
-        liveEvents.liveEvents.get('jan').gifts.gifts.has('rose')
-      ).toBeTruthy();
+      expect(liveEvents.liveEvents.length).toBe(2);
+      expect(liveEvents.find('jenny')).toBeTruthy();
+      expect(liveEvents.find('jenny').likeCount).toBe(1);
+      expect(liveEvents.find('jenny').gifts.gifts.size).toBe(0);
+      expect(liveEvents.find('jan')).toBeTruthy();
+      expect(liveEvents.find('jan').likeCount).toBe(0);
+      expect(liveEvents.find('jan').gifts.gifts.size).toBe(1);
+      expect(liveEvents.find('jan').gifts.gifts.has('rose')).toBeTruthy();
       liveEvents.add(giftMsg);
-      expect(liveEvents.liveEvents.size).toBe(2);
-      expect(liveEvents.liveEvents.has('jenny')).toBeTruthy();
-      expect(liveEvents.liveEvents.get('jenny').likeCount).toBe(1);
-      expect(liveEvents.liveEvents.get('jenny').gifts.gifts.size).toBe(0);
-      expect(liveEvents.liveEvents.has('jan')).toBeTruthy();
-      expect(liveEvents.liveEvents.get('jan').likeCount).toBe(0);
-      expect(liveEvents.liveEvents.get('jan').gifts.gifts.size).toBe(1);
-      expect(
-        liveEvents.liveEvents.get('jan').gifts.gifts.has('rose')
-      ).toBeTruthy();
-      expect(
-        liveEvents.liveEvents.get('jan').gifts.gifts.get('rose').count
-      ).toBe(2);
+      expect(liveEvents.liveEvents.length).toBe(2);
+      expect(liveEvents.find('jenny')).toBeTruthy();
+      expect(liveEvents.find('jenny').likeCount).toBe(1);
+      expect(liveEvents.find('jenny').gifts.gifts.size).toBe(0);
+      expect(liveEvents.find('jan')).toBeTruthy();
+      expect(liveEvents.find('jan').likeCount).toBe(0);
+      expect(liveEvents.find('jan').gifts.gifts.size).toBe(1);
+      expect(liveEvents.find('jan').gifts.gifts.has('rose')).toBeTruthy();
+      expect(liveEvents.find('jan').gifts.gifts.get('rose').count).toBe(2);
+    });
+    test('add sorted', async () => {
+      const msg1: LiveEventLikeMessage = {
+        type: MessageType.LIVE_EVENT,
+        eventType: LiveEventType.LIKE,
+        username: 'jenny',
+      };
+      const msg2: LiveEventLikeMessage = {
+        type: MessageType.LIVE_EVENT,
+        eventType: LiveEventType.LIKE,
+        username: 'jan',
+      };
+      const liveEvents = new LiveEvents();
+      liveEvents.add(msg1);
+      await new Promise((r) => setTimeout(r, 1));
+      liveEvents.add(msg2);
+      expect(liveEvents.liveEvents[0].username).toBe(msg1.username);
+      expect(liveEvents.liveEvents[1].username).toBe(msg2.username);
     });
   });
 });
