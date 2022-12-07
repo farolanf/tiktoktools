@@ -284,6 +284,36 @@ export default function Options() {
           </Stack>
         </Form.Group>
       </Form>
+      <Form.Group controlId="formGroupRate">
+        <Form.Label>Rate</Form.Label>
+        <Stack direction="horizontal">
+          <Form.Range
+            min="100"
+            max="5000"
+            value={Math.floor(config.rate * 1000)}
+            onChange={(e) =>
+              setConfig({ ...config, rate: e.target.value / 1000 })
+            }
+            style={{ width: 300 }}
+          />
+          <span className="ms-1">{config.rate.toFixed(1)}</span>
+        </Stack>
+      </Form.Group>
+      <Form.Group controlId="formGroupPitch">
+        <Form.Label>Pitch</Form.Label>
+        <Stack direction="horizontal">
+          <Form.Range
+            min="0"
+            max="2000"
+            value={Math.floor(config.pitch * 1000)}
+            onChange={(e) =>
+              setConfig({ ...config, pitch: e.target.value / 1000 })
+            }
+            style={{ width: 300 }}
+          />
+          <span className="ms-1">{config.pitch.toFixed(1)}</span>
+        </Stack>
+      </Form.Group>
       <Form.Group controlId="formGroupVolume">
         <Form.Label>Volume</Form.Label>
         <Stack direction="horizontal">

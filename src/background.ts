@@ -78,11 +78,11 @@ function say(text: string, voiceName?: string) {
 }
 
 function randomPitch() {
-  return 1 + Math.random() * 0.2;
+  return config.pitch + Math.random() * 0.2;
 }
 
 function randomRate() {
-  return 1.2 + Math.random() * 0.2;
+  return config.rate + Math.random() * 0.2;
 }
 
 function randomVoice() {
