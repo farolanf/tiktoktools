@@ -8,11 +8,12 @@ export enum MessageType {
 export enum LiveEventType {
   LIKE,
   GIFT,
+  FOLLOW,
 }
 
-export interface LiveEventLikeMessage {
+export interface LiveEventBasicMessage {
   type: MessageType.LIVE_EVENT;
-  eventType: LiveEventType.LIKE;
+  eventType: LiveEventType;
   username: string;
 }
 
@@ -21,9 +22,16 @@ export interface LiveEventGiftMessage {
   eventType: LiveEventType.GIFT;
   username: string;
   gift: string;
+  count?: number;
 }
 
-export type LiveEventMessage = LiveEventLikeMessage | LiveEventGiftMessage;
+export type LiveEventMessage = {
+  type: MessageType.LIVE_EVENT;
+  eventType: LiveEventType;
+  username: string;
+  gift?: string;
+  count?: number;
+};
 
 export interface SpeechMessage {
   type: MessageType.SPEECH;
@@ -43,8 +51,9 @@ interface GetVoicesResponse {
   voices: chrome.tts.TtsVoice[];
 }
 
-export function sendMessage(message: LiveEventLikeMessage): Promise<void>;
 export function sendMessage(message: LiveEventGiftMessage): Promise<void>;
+export function sendMessage(message: LiveEventBasicMessage): Promise<void>;
+export function sendMessage(message: LiveEventMessage): Promise<void>;
 export function sendMessage(message: SpeechMessage): Promise<void>;
 export function sendMessage(message: ReloadConfigMessage): Promise<void>;
 

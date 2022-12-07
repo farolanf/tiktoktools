@@ -2,7 +2,7 @@ import { Gift, Gifts, giftCoins, LiveEvent, LiveEvents } from './live-events';
 import {
   MessageType,
   LiveEventType,
-  LiveEventLikeMessage,
+  LiveEventBasicMessage,
   LiveEventGiftMessage,
 } from './message';
 
@@ -160,7 +160,7 @@ describe('live events', () => {
   });
 });
 
-function likeMessage(username: string): LiveEventLikeMessage {
+function likeMessage(username: string): LiveEventBasicMessage {
   return {
     type: MessageType.LIVE_EVENT,
     eventType: LiveEventType.LIKE,
