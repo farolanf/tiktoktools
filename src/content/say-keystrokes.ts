@@ -6,7 +6,7 @@ let keystrokes = '';
 const say = debounce(() => {
   sendMessage({ type: MessageType.SPEECH, text: keystrokes });
   keystrokes = '';
-}, 200);
+}, 250);
 
 window.addEventListener('keyup', (e) => {
   keystrokes += e.key;

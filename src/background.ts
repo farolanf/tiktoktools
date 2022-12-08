@@ -18,8 +18,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 async function onActivate() {
   const tab = await getCurrentTab();
 
-  console.log('tab', tab);
-
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     files: ['src/content.js'],
