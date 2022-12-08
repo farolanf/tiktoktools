@@ -1,1 +1,2 @@
-import './content/say-keystrokes';
+alert('content injected');
+// import './content/say-keystrokes';
