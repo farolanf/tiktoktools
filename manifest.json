@@ -2,19 +2,19 @@
   "manifest_version": 3,
   "name": "TikTok Tools",
   "version": "1.0.0",
-  "permissions": ["tts", "storage"],
+  "permissions": ["tts", "storage", "scripting", "activeTab"],
   "background": {
     "service_worker": "src/background.ts",
     "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "js": ["src/content.tsx"]
-    }
-  ],
   "options_ui": {
     "page": "src/options.html",
     "open_in_tab": true
-  }
+  },
+  "action": {
+    "default_popup": "src/popup.html"
+  },
+  "web_accessible_resources": [
+    { "matches": ["<all_urls>"], "resources": ["src/content.tsx"] }
+  ]
 }

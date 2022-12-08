@@ -1,2 +1,3 @@
-alert('content injected');
-// import './content/say-keystrokes';
+import './content/say-keystrokes';
+
+console.log('content injected');

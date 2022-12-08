@@ -8,6 +8,31 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     case MessageType.RELOAD_CONFIG:
       loadConfig();
       break;
+    case MessageType.ACTIVATE:
+      onActivate();
+      break;
   }
   return true;
 });
+
+async function onActivate() {
+  const tab = await getCurrentTab();
+
+  console.log('tab', tab);
+
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: ['src/content.js'],
+  });
+
+  chrome.action.setBadgeText({ text: 'ON', tabId: tab.id });
+  chrome.action.setBadgeBackgroundColor({ color: 'green', tabId: tab.id });
+}
+
+async function getCurrentTab() {
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    lastFocusedWindow: true,
+  });
+  return tab;
+}

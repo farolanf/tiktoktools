@@ -1,4 +1,5 @@
 export enum MessageType {
+  ACTIVATE,
   SPEECH,
   GET_VOICES,
   RELOAD_CONFIG,
@@ -43,6 +44,10 @@ interface ReloadConfigMessage {
   type: MessageType.RELOAD_CONFIG;
 }
 
+interface ActivateMessage {
+  type: MessageType.ACTIVATE;
+}
+
 interface GetVoicesMessage {
   type: MessageType.GET_VOICES;
 }
@@ -56,6 +61,7 @@ export function sendMessage(message: LiveEventBasicMessage): Promise<void>;
 export function sendMessage(message: LiveEventMessage): Promise<void>;
 export function sendMessage(message: SpeechMessage): Promise<void>;
 export function sendMessage(message: ReloadConfigMessage): Promise<void>;
+export function sendMessage(message: ActivateMessage): Promise<void>;
 
 export function sendMessage(
   message: GetVoicesMessage
