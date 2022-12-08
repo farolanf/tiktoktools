@@ -16,6 +16,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 async function onActivate() {
+  await loadConfig();
+
   const tab = await getCurrentTab();
 
   chrome.scripting.executeScript({
