@@ -20,10 +20,10 @@ async function onActivate() {
 
   const tab = await getCurrentTab();
 
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: ['src/content.js'],
-  });
+  // chrome.scripting.executeScript({
+  //   target: { tabId: tab.id },
+  //   files: ['src/content.js'],
+  // });
 
   chrome.action.setBadgeText({ text: 'ON', tabId: tab.id });
   chrome.action.setBadgeBackgroundColor({ color: 'green', tabId: tab.id });
