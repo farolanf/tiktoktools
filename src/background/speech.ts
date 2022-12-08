@@ -26,11 +26,11 @@ export function say(text: string, voiceName?: string) {
 }
 
 function randomPitch() {
-  return config.pitch + Math.random() * 0.2;
+  return Math.min(config.pitch + Math.random() * 0.2, 2.0);
 }
 
 function randomRate() {
-  return config.rate + Math.random() * 0.2;
+  return Math.min(config.rate + Math.random() * 0.2, 5.0);
 }
 
 function randomVoice() {
