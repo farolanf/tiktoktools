@@ -26,6 +26,8 @@ export default function LiveEvents() {
     const [event, setEvent] = useState<any>()
     const [comment, setComment] = useState('')
     const [gift, setGift] = useState('')
+    const [totalRp, setTotalRp] = useState(0)
+    const [connected, setConnected] = useState(false)
 
     useEffect(() => {
         fetchInfo()
@@ -41,6 +43,8 @@ export default function LiveEvents() {
             .then(res => res.json())
             .then(json => {
                 setUserId(json?.user_id ?? '')
+                setConnected(!!json?.user_id)
+                setTotalRp(json?.total_rp ?? 0)
             })
     }
 
@@ -72,6 +76,7 @@ export default function LiveEvents() {
                 case 'gift':
                     sayGift(event)
                     setGift(`${event.user}: ${event.gift} x ${event.count} = ${event.coins * event.count} @${event.coins} = Rp${getRp(event)}`)
+                    setTotalRp((total) => total + getRp(event))
                     break
             }
         }
@@ -99,13 +104,16 @@ export default function LiveEvents() {
                         type="text"
                         className="mb-2"
                         value={userId}
-                        onChange={(e) => setUserId(e.target.value)}
+                        onChange={(e) => {
+                            setUserId(e.target.value)
+                            setConnected(false)
+                        }}
                         onFocus={(e) => {
                             e.target.setSelectionRange(0, e.target.value.length);
                         }}
                     />
                     <Stack gap={2} className="align-items-start">
-                        <Button type="submit" variant="primary" disabled={!userId}>
+                        <Button type="submit" variant="primary" disabled={!userId || connected}>
                             Connect
                         </Button>
                     </Stack>
@@ -143,6 +151,23 @@ export default function LiveEvents() {
                         type="text"
                         className="mb-2"
                         value={gift}
+                        readOnly
+                        style={{ width: 800 }}
+                    />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Form.Label
+                        style={{
+                            marginRight: 8,
+                            fontWeight: event?.type == 'gift' ? 700 : 400
+                        }}
+                    >
+                        Total Rp
+                    </Form.Label>
+                    <Form.Control
+                        type="text"
+                        className="mb-2"
+                        value={totalRp}
                         readOnly
                         style={{ width: 800 }}
                     />
