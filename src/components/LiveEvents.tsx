@@ -15,9 +15,10 @@ const sanitizeComment = str => str.replaceAll(/[^a-zA-Z0-9.,!? ]+/g, '').slice(0
 
 const sayGift = e => {
     const coins = e.coins * e.count
-    if (coins > 100) say(`wow! wooooww!! woooooooooooooowwwww!!!! terima kasih banyakk kakak ${e.user}!`)
-    else if (coins > 50) say(`wow! terima kasih banyakk kakak ${e.user}`)
-    else if (coins > 10) say(`terima kasih kakak ${e.user}`)
+    if (coins > 5000) say(`wow wow! duh terima kasih banyak kakak ${e.user}!`)
+    else if (coins > 100) say(`wow wow! terima kasih banyak kakak ${e.user}!`)
+    else if (coins > 50) say(`wow! terima kasih banyak kakak ${e.user}!`)
+    else if (coins > 10) say(`terima kasih kakak ${e.user}!`)
     else say(`makasih kak ${e.user}`)
 }
 
