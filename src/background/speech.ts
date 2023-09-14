@@ -7,7 +7,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       say(message.text, message.voiceName);
       break;
     case MessageType.GET_VOICES:
-      chrome.tts.getVoices().then((voices) => sendResponse({ voices }));
+      chrome.tts.getVoices()
+        .then((voices) => {
+          const uniq: chrome.tts.TtsVoice[] = []
+          voices.forEach(v => !uniq.some(u => u.voiceName == v.voiceName) && uniq.push(v))
+          return uniq
+        })
+        .then((voices) => sendResponse({ voices }));
       break;
   }
   return true;

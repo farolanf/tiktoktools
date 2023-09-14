@@ -9,12 +9,13 @@ import { getConfig, updateConfig, defaultConfig } from '../lib/config';
 import Stack from 'react-bootstrap/Stack';
 import BsForm from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import LiveEvents from './LiveEvents';
 
 const Container = styled(Stack)`
   padding: 32px;
 `;
 
-const Form = styled(BsForm)`
+export const Form = styled(BsForm)`
   width: 800px;
 `;
 
@@ -206,6 +207,7 @@ export default function Options() {
 
   return (
     <Container gap={3} className="align-items-start">
+      <LiveEvents />
       <Form>
         <Form.Group controlId="formGroupVoice" className="mb-3">
           <Form.Label>Voices</Form.Label>
