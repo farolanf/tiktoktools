@@ -11,7 +11,7 @@ const COIN_RP = KURS / 200
 
 const getRp = e => e.coins * e.count * COIN_RP
 
-const sanitizeComment = str => str.replaceAll(/[^a-zA-Z0-9.,!? ]+/g, '')
+const sanitizeComment = str => str.replaceAll(/[^a-zA-Z0-9.,!? ]+/g, '').slice(0, 300)
 
 const sayGift = e => {
     const coins = e.coins * e.count
