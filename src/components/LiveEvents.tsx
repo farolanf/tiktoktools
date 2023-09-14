@@ -63,6 +63,8 @@ export default function LiveEvents() {
     }
 
     async function stop() {
+        setEvent(null)
+        setConnected(false)
         await fetch(API_URL + '/stop', { method: 'post' })
     }
 
