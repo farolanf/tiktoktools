@@ -56,10 +56,14 @@ export default function LiveEvents() {
         const fd = new FormData()
         fd.append('user_id', userId)
 
-        return fetch(API_URL + '/live', {
+        await fetch(API_URL + '/live', {
             method: 'post',
             body: fd
         })
+    }
+
+    async function stop() {
+        await fetch(API_URL + '/stop', { method: 'post' })
     }
 
     async function maybeSay(event) {
@@ -112,9 +116,12 @@ export default function LiveEvents() {
                             e.target.setSelectionRange(0, e.target.value.length);
                         }}
                     />
-                    <Stack gap={2} className="align-items-start">
+                    <Stack gap={2} className="align-items-start" direction="horizontal">
                         <Button type="submit" variant="primary" disabled={!userId || connected}>
                             Connect
+                        </Button>
+                        <Button type="button" variant="secondary" onClick={stop}>
+                            Stop
                         </Button>
                     </Stack>
                 </Form.Group>
