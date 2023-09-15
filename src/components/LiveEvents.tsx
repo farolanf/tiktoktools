@@ -47,6 +47,9 @@ export default function LiveEvents() {
                 setConnected(!!json?.user_id)
                 setTotalRp(json?.total_rp ?? 0)
             })
+            .catch((reason) => {
+                console.error('unable to fetch info', reason)
+            })
     }
 
     async function connect(e) {
@@ -61,6 +64,9 @@ export default function LiveEvents() {
             method: 'post',
             body: fd
         })
+            .catch((reason) => {
+                console.error('unable to connect', reason)
+            })
     }
 
     async function stop() {
@@ -98,6 +104,9 @@ export default function LiveEvents() {
         await fetch(API_URL + '/events')
             .then(res => res.json())
             .then(json => json[0] && setEvent(json[0]))
+            .catch((reason) => {
+                console.error('unable to fetch events', reason)
+            })
 
         setTimeout(fetchEvents, 200)
     }
@@ -134,6 +143,7 @@ export default function LiveEvents() {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Form.Label
                         style={{
+                            width: 100,
                             marginRight: 8,
                             fontWeight: event?.type == 'comment' ? 700 : 400
                         }}
@@ -151,6 +161,7 @@ export default function LiveEvents() {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Form.Label
                         style={{
+                            width: 100,
                             marginRight: 8,
                             fontWeight: event?.type == 'gift' ? 700 : 400
                         }}
@@ -168,6 +179,7 @@ export default function LiveEvents() {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Form.Label
                         style={{
+                            width: 100,
                             marginRight: 8,
                             fontWeight: event?.type == 'gift' ? 700 : 400
                         }}
