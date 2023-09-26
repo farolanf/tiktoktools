@@ -7,6 +7,9 @@ import { useCountries, useVoices } from '../lib/hooks';
 
 type VoiceSelectorProps = {
     voiceName: string
+    volume?: number
+    rate?: number
+    pitch?: number
     testVoiceText: string
     onChange: (voiceName: string) => void
 }
@@ -34,7 +37,11 @@ export default function VoiceSelector(props: VoiceSelectorProps) {
         );
     }, [voices, country]);
 
-    const testVoice = (voiceName?: string) => say(props.testVoiceText, voiceName);
+    const testVoice = (voiceName?: string) => say(props.testVoiceText, voiceName, {
+        volume: props.volume,
+        rate: props.rate,
+        pitch: props.pitch,
+    });
 
     const onEditVoice = () => {
         const states = voiceRowState.slice();

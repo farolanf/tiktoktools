@@ -13,6 +13,8 @@ type AnnouncementProps = {
     announcement: Announcement
     onChange: (announcement: Announcement) => void
     onDelete: () => void
+    onCopy: () => void
+    onPaste: () => void
 }
 
 function Announcement(props: AnnouncementProps) {
@@ -48,6 +50,9 @@ function Announcement(props: AnnouncementProps) {
 
             <VoiceSelector
                 voiceName={props.announcement.voiceName}
+                volume={props.announcement.volume}
+                rate={props.announcement.rate}
+                pitch={props.announcement.pitch}
                 testVoiceText={props.announcement.text}
                 onChange={voiceName => onChange({ voiceName })}
             />
@@ -101,8 +106,26 @@ function Announcement(props: AnnouncementProps) {
                 type="button"
                 variant="danger"
                 onClick={props.onDelete}
+                style={{ marginRight: 8 }}
             >
                 Delete
+            </Button>
+            <Button
+                type="button"
+                variant="secondary"
+                onClick={props.onCopy}
+                style={{ marginRight: 8 }}
+            >
+                Copy
+            </Button>
+            <Button
+                type="button"
+                variant="secondary"
+                onClick={props.onPaste}
+                disabled={!props.onPaste}
+                style={{ marginRight: 8 }}
+            >
+                Paste
             </Button>
         </div>
     )
@@ -111,8 +134,13 @@ function Announcement(props: AnnouncementProps) {
 export default function Announcer() {
     const [running, setRunning] = useState(false)
     const [config, setConfig] = useConfig()
+    const [copy, setCopy] = useState<Announcement>()
 
-    const currentRef = useRef({ timer: null, config, announcements: [] })
+    const currentRef = useRef({
+        timer: null,
+        config,
+        announcements: [],
+    })
 
     currentRef.current.config = config
 
@@ -187,6 +215,19 @@ export default function Announcer() {
         })
     }
 
+    const onPaste = id => () => {
+        setConfig({
+            ...config,
+            announcements: config.announcements.map(val => val.id === id ? {
+                ...val,
+                voiceName: copy.voiceName,
+                volume: copy.volume,
+                rate: copy.rate,
+                pitch: copy.pitch,
+            } : val)
+        })
+    }
+
     return (
         <>
             <label style={{ fontWeight: 'bold' }}>Announcements</label>
@@ -206,6 +247,8 @@ export default function Announcer() {
                         announcement={announcement}
                         onChange={onChange}
                         onDelete={onDelete(announcement)}
+                        onCopy={() => setCopy(announcement)}
+                        onPaste={copy && onPaste(announcement.id)}
                     />
                 </div>
             ))}
