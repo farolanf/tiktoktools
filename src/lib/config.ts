@@ -1,9 +1,11 @@
 export interface Announcement {
+  id: string
   text: string
   voiceName?: string
   volume?: number;
   rate?: number;
   pitch?: number;
+  active?: boolean;
 }
 
 export interface Config {

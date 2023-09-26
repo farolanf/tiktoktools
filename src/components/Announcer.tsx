@@ -1,3 +1,4 @@
+import shuffle from "lodash/shuffle";
 import { Form } from "./Options"
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button';
@@ -16,6 +17,7 @@ type AnnouncementProps = {
     announcement: Announcement
     testVoiceText: string
     onChange: (announcement: Announcement) => void
+    onDelete: () => void
 }
 
 function Announcement(props: AnnouncementProps) {
@@ -32,6 +34,13 @@ function Announcement(props: AnnouncementProps) {
 
     return (
         <div style={{ paddingLeft: 16 }}>
+            <Form.Check
+                type="checkbox"
+                label="Active"
+                id={`active-${props.announcement.id}`}
+                checked={!!props.announcement.active}
+                onChange={e => onChange({ active: e.target.checked })}
+            />
             <Form.Group>
                 <Form.Label>Text</Form.Label>
                 <Form.Control
@@ -93,6 +102,13 @@ function Announcement(props: AnnouncementProps) {
                     <span className="ms-1">{Math.floor(volume * 100)}</span>
                 </Stack>
             </Form.Group>
+            <Button
+                type="button"
+                variant="danger"
+                onClick={props.onDelete}
+            >
+                Delete
+            </Button>
         </div>
     )
 }
@@ -101,9 +117,13 @@ export default function Announcer(props: AnnouncerProps) {
     const [running, setRunning] = useState(false)
     const [config, setConfig] = useConfig()
 
-    const currentRef = useRef({ timer: null, config })
+    const currentRef = useRef({ timer: null, config, announcements: [] })
 
     currentRef.current.config = config
+
+    useEffect(() => {
+        currentRef.current.announcements = shuffle(config.announcements.filter(x => x.active))
+    }, [config])
 
     useEffect(() => {
         if (!running) return
@@ -112,13 +132,17 @@ export default function Announcer(props: AnnouncerProps) {
             const { config } = currentRef.current
 
             if (!await isSpeaking()) {
-                const i = Math.floor(Math.random() * config.announcements.length)
-                const ann = config.announcements[i]
-                say(ann.text, ann.voiceName, {
-                    volume: ann.volume,
-                    rate: ann.rate,
-                    pitch: ann.pitch,
-                })
+                let announcements = currentRef.current.announcements
+
+                if (!announcements.length) {
+                    announcements = shuffle(config.announcements.filter(x => x.active))
+                }
+
+                if (announcements.length) {
+                    const ann = announcements.shift()
+                    currentRef.current.announcements = announcements
+                    sayAnnouncement(ann)
+                }
             }
 
             currentRef.current.timer = setTimeout(run, 200)
@@ -131,22 +155,40 @@ export default function Announcer(props: AnnouncerProps) {
         }
     }, [running])
 
+    function sayAnnouncement(ann) {
+        ann && say(ann.text, ann.voiceName, {
+            volume: ann.volume,
+            rate: ann.rate,
+            pitch: ann.pitch,
+        })
+    }
+
     const onAdd = () => {
         setConfig({
             ...config,
             announcements: [
                 ...config.announcements,
                 {
+                    id: Date.now().toString(),
                     text: '',
                 }
             ]
         })
     }
 
-    const onChange = idx => (announcement) => {
+    const onChange = (announcement) => {
         setConfig({
             ...config,
-            announcements: config.announcements.map((val, i) => i == idx ? announcement : val)
+            announcements: config.announcements.map(
+                val => val.id === announcement.id ? announcement : val
+            )
+        })
+    }
+
+    const onDelete = (announcement) => () => {
+        setConfig({
+            ...config,
+            announcements: config.announcements.filter(val => val.id !== announcement.id)
         })
     }
 
@@ -162,13 +204,14 @@ export default function Announcer(props: AnnouncerProps) {
             </Button>
             {config.announcements.map((announcement, i) => (
                 <div
-                    key={i}
+                    key={announcement.id}
                 >
                     <label>#{i + 1}</label>
                     <Announcement
                         announcement={announcement}
                         testVoiceText={props.testVoiceText}
-                        onChange={onChange(i)}
+                        onChange={onChange}
+                        onDelete={onDelete(announcement)}
                     />
                 </div>
             ))}
