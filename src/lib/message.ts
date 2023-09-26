@@ -38,6 +38,9 @@ export interface SpeechMessage {
   type: MessageType.SPEECH;
   text: string;
   voiceName?: string;
+  volume?: number;
+  rate?: number;
+  pitch?: number;
 }
 
 interface ReloadConfigMessage {

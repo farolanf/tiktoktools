@@ -4,7 +4,11 @@ import { MessageType } from '../lib/message';
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   switch (message.type) {
     case MessageType.SPEECH:
-      say(message.text, message.voiceName);
+      say(message.text, message.voiceName, {
+        volume: message.volume,
+        rate: message.rate,
+        pitch: message.pitch,
+      });
       break;
     case MessageType.GET_VOICES:
       chrome.tts.getVoices()
@@ -19,15 +23,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   return true;
 });
 
-export function say(text: string, voiceName?: string) {
+export function say(text: string, voiceName?: string, options?: { volume?: number, rate?: number, pitch?: number }) {
   const pitch = randomPitch();
   const rate = randomRate();
   chrome.tts.speak(text, {
     enqueue: true,
     voiceName: voiceName || randomVoice(),
-    pitch,
-    rate,
-    volume: config.volume,
+    pitch: options?.pitch ?? pitch,
+    rate: options?.rate ?? rate,
+    volume: options?.volume ?? config.volume,
   });
 }
 

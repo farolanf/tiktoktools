@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { say } from '../lib/speech';
 import { MessageType, LiveEventType, sendMessage } from '../lib/message';
-import { defaultConfig } from '../lib/config';
 import Stack from 'react-bootstrap/Stack';
 import BsForm from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';

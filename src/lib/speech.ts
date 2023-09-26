@@ -1,7 +1,7 @@
 import { MessageType, sendMessage } from './message';
 
-export function say(text: string, voiceName?: string) {
-  sendMessage({ type: MessageType.SPEECH, text, voiceName });
+export function say(text: string, voiceName?: string, options?: { volume?: number, rate?: number, pitch?: number }) {
+  sendMessage({ type: MessageType.SPEECH, text, voiceName, ...options });
 }
 
 export async function isSpeaking() {
