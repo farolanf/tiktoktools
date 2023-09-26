@@ -9,13 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { isSpeaking } from "../lib/speech";
 import { say } from "../background/speech";
 
-type AnnouncerProps = {
-    testVoiceText: string
-}
-
 type AnnouncementProps = {
     announcement: Announcement
-    testVoiceText: string
     onChange: (announcement: Announcement) => void
     onDelete: () => void
 }
@@ -53,7 +48,7 @@ function Announcement(props: AnnouncementProps) {
 
             <VoiceSelector
                 voiceName={props.announcement.voiceName}
-                testVoiceText={props.testVoiceText}
+                testVoiceText={props.announcement.text}
                 onChange={voiceName => onChange({ voiceName })}
             />
 
@@ -113,7 +108,7 @@ function Announcement(props: AnnouncementProps) {
     )
 }
 
-export default function Announcer(props: AnnouncerProps) {
+export default function Announcer() {
     const [running, setRunning] = useState(false)
     const [config, setConfig] = useConfig()
 
@@ -209,7 +204,6 @@ export default function Announcer(props: AnnouncerProps) {
                     <label>#{i + 1}</label>
                     <Announcement
                         announcement={announcement}
-                        testVoiceText={props.testVoiceText}
                         onChange={onChange}
                         onDelete={onDelete(announcement)}
                     />

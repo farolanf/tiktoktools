@@ -77,7 +77,7 @@ export default function Options() {
   return (
     <Container gap={3} className="align-items-start">
       <LiveEvents />
-      <Announcer testVoiceText={randomVoiceText} />
+      <Announcer />
       <VoicesSelector
         voiceNames={config.voiceNames}
         testVoiceText={randomVoiceText}

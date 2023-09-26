@@ -27,7 +27,7 @@ export function say(text: string, voiceName?: string, options?: { volume?: numbe
   const pitch = randomPitch();
   const rate = randomRate();
   chrome.tts.speak(text, {
-    enqueue: true,
+    enqueue: false,
     voiceName: voiceName || randomVoice(),
     pitch: options?.pitch ?? pitch,
     rate: options?.rate ?? rate,
