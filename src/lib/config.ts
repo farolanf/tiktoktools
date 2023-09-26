@@ -1,4 +1,13 @@
+export interface Announcement {
+  text: string
+  voiceName?: string
+  volume?: number;
+  rate?: number;
+  pitch?: number;
+}
+
 export interface Config {
+  announcements: Announcement[]
   voiceNames: string[];
   sayVoiceName: string;
   volume: number;
@@ -15,6 +24,7 @@ export interface PatchConfig {
 }
 
 export const defaultConfig: Config = {
+  announcements: [],
   voiceNames: ['Microsoft Gadis Online (Natural) - Indonesian (Indonesia)'],
   sayVoiceName: 'Microsoft Gadis Online (Natural) - Indonesian (Indonesia)',
   volume: 1.0,
@@ -24,7 +34,10 @@ export const defaultConfig: Config = {
 
 export async function getConfig(): Promise<Config> {
   const result = await chrome.storage.local.get('config');
-  return result.config || defaultConfig;
+  return {
+    announcements: [],
+    ...(result.config || defaultConfig)
+  }
 }
 
 export async function updateConfig(newConfig: PatchConfig): Promise<void> {

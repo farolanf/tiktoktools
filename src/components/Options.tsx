@@ -1,15 +1,16 @@
-import uniq from 'lodash/uniq';
-import sortBy from 'lodash/sortBy';
 import sample from 'lodash/sample';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { say } from '../lib/speech';
 import { MessageType, LiveEventType, sendMessage } from '../lib/message';
-import { getConfig, updateConfig, defaultConfig } from '../lib/config';
+import { defaultConfig } from '../lib/config';
 import Stack from 'react-bootstrap/Stack';
 import BsForm from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import LiveEvents from './LiveEvents';
+import Announcer from './Announcer';
+import { useConfig, useCountries, useVoices } from '../lib/hooks';
+import VoicesSelector from './VoicesSelector';
 
 const Container = styled(Stack)`
   padding: 32px;
@@ -19,126 +20,22 @@ export const Form = styled(BsForm)`
   width: 800px;
 `;
 
-const VoiceRow = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const TestButton = styled(Button)``;
-
 export default function Options() {
-  const [config, setConfig] = useState(defaultConfig);
-  const [voices, setVoices] = useState<chrome.tts.TtsVoice[]>([]);
-  const [filteredVoices, setFilteredVoices] = useState<chrome.tts.TtsVoice[]>(
-    []
-  );
-  const [country, setCountry] = useState<string>();
-  const [countries, setCountries] = useState<
-    {
-      code: string;
-      name: string;
-    }[]
-  >([]);
-  const [voiceRowState, setVoiceRowState] = useState<
-    {
-      editMode: boolean;
-    }[]
-  >(defaultConfig.voiceNames.map((_v) => ({ editMode: false })));
+  const [config, setConfig] = useConfig()
+
+  const voices = useVoices()
+
   const [randomVoiceText, setRandomVoiceText] = useState(
     'Terima kasih Jenny atas hadiah mawarnya!'
   );
+
   const [sayText, setSayText] = useState('Halo, apa kabar?');
-
-  const countryName = (code): string =>
-    new Intl.DisplayNames(['en'], { type: 'region' }).of(code)!;
-
-  useEffect(() => {
-    sendMessage({ type: MessageType.GET_VOICES }).then((response) => {
-      setVoices(response.voices);
-    });
-    getConfig().then((result) => setConfig(result));
-  }, []);
-
-  useEffect(() => {
-    setCountries(
-      sortBy(
-        uniq(
-          voices
-            .filter((voice) => voice.lang)
-            .map((voice) => voice.lang!.split('-')[1])
-        ).map((code) => ({
-          code,
-          name: countryName(code),
-        })),
-        (x) => x.name
-      )
-    );
-  }, [voices]);
-
-  useEffect(() => {
-    setFilteredVoices(
-      country
-        ? voices.filter((voice) => voice.lang && voice.lang.endsWith(country))
-        : voices
-    );
-  }, [voices, country]);
-
-  useEffect(() => {
-    updateConfig(config).then(() => {
-      sendMessage({ type: MessageType.RELOAD_CONFIG });
-    });
-  }, [config]);
-
-  useEffect(() => {
-    setVoiceRowState(
-      config.voiceNames.map((_voice, i) => ({
-        editMode: voiceRowState[i]?.editMode || false,
-      }))
-    );
-  }, [config.voiceNames]);
 
   const testVoice = (voiceName?: string) => say(randomVoiceText, voiceName);
 
   const onTestRandomVoice = (e) => {
     e.preventDefault();
     testVoice();
-  };
-
-  const onEditVoice = (i: number) => () => {
-    const states = voiceRowState.slice();
-    states[i].editMode = true;
-    setVoiceRowState(states);
-  };
-
-  const onEndEditVoice = (i: number) => () => {
-    const states = voiceRowState.slice();
-    states[i].editMode = false;
-    setVoiceRowState(states);
-  };
-
-  const onChangeVoice = (i, voiceName) => {
-    const voiceNames = config.voiceNames.slice();
-    voiceNames[i] = voiceName;
-    setConfig({
-      ...config,
-      voiceNames,
-    });
-  };
-
-  const onAddVoice = () => {
-    setConfig({
-      ...config,
-      voiceNames: config.voiceNames.concat(filteredVoices[0].voiceName!),
-    });
-  };
-
-  const onRemoveVoice = (i: number) => () => {
-    const voiceNames = config.voiceNames.slice();
-    voiceNames.splice(i, 1);
-    setConfig({
-      ...config,
-      voiceNames,
-    });
   };
 
   const onUpdateSayVoiceName = (sayVoiceName) => {
@@ -171,71 +68,22 @@ export default function Options() {
     });
   };
 
-  const renderVoiceRow = (voiceName, i) => (
-    <VoiceRow key={i} className="mb-2">
-      <Form.Select
-        value={voiceName}
-        onChange={(e) => onChangeVoice(i, e.target.value)}
-        onFocus={onEditVoice(i)}
-        onBlur={onEndEditVoice(i)}
-      >
-        <option></option>
-        {(voiceRowState[i]?.editMode ? filteredVoices : voices).map((voice) => (
-          <option key={voice.voiceName} value={voice.voiceName}>
-            {voice.voiceName} {voice.lang}
-          </option>
-        ))}
-      </Form.Select>
-      <TestButton
-        type="button"
-        variant="outline-primary"
-        className="ms-1"
-        onClick={() => testVoice(voiceName)}
-      >
-        Test
-      </TestButton>
-      <Button
-        type="button"
-        variant="outline-danger"
-        className="ms-1"
-        onClick={onRemoveVoice(i)}
-      >
-        Remove
-      </Button>
-    </VoiceRow>
-  );
+  const onChangeVoices = voiceNames => {
+    setConfig({
+      ...config,
+      voiceNames,
+    })
+  }
 
   return (
     <Container gap={3} className="align-items-start">
       <LiveEvents />
-      <Form>
-        <Form.Group controlId="formGroupVoice" className="mb-3">
-          <Form.Label>Voices</Form.Label>
-          <Stack gap={2} className="align-items-start">
-            <Form.Select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              <option>All Countries</option>
-              {countries.map(({ code, name }) => (
-                <option key={code} value={code}>
-                  {code} - {name}
-                </option>
-              ))}
-            </Form.Select>
-            <div>
-              {config.voiceNames.map(renderVoiceRow)}
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={onAddVoice}
-              >
-                Add
-              </Button>
-            </div>
-          </Stack>
-        </Form.Group>
-      </Form>
+      <Announcer testVoiceText={randomVoiceText} />
+      <VoicesSelector
+        voiceNames={config.voiceNames}
+        testVoiceText={randomVoiceText}
+        onChange={onChangeVoices}
+      />
       <Form onSubmit={onTestRandomVoice}>
         <Form.Group controlId="formGroupVoiceTest" className="mb-3">
           <Form.Label>Test Voices</Form.Label>
