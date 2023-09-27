@@ -38,7 +38,7 @@ function Announcement(props: AnnouncementProps) {
                 checked={!!props.announcement.active}
                 onChange={e => onChange({ active: e.target.checked })}
             />
-            <Form.Group>
+            <Form.Group style={{ width: '80vw' }}>
                 <Form.Label>Text</Form.Label>
                 <Form.Control
                     type="text"
@@ -48,85 +48,87 @@ function Announcement(props: AnnouncementProps) {
                 />
             </Form.Group>
 
-            <VoiceSelector
-                voiceName={props.announcement.voiceName}
-                volume={props.announcement.volume}
-                rate={props.announcement.rate}
-                pitch={props.announcement.pitch}
-                testVoiceText={props.announcement.text}
-                onChange={voiceName => onChange({ voiceName })}
-            />
+            <details>
+                <VoiceSelector
+                    voiceName={props.announcement.voiceName}
+                    volume={props.announcement.volume}
+                    rate={props.announcement.rate}
+                    pitch={props.announcement.pitch}
+                    testVoiceText={props.announcement.text}
+                    onChange={voiceName => onChange({ voiceName })}
+                />
 
-            <Form.Group controlId="formGroupRate">
-                <Form.Label>Rate</Form.Label>
-                <Stack direction="horizontal">
-                    <Form.Range
-                        min="100"
-                        max="5000"
-                        value={Math.floor(rate * 1000)}
-                        onChange={(e) =>
-                            onChange({ rate: e.target.value / 1000 })
-                        }
-                        style={{ width: 300 }}
-                    />
-                    <span className="ms-1">{rate.toFixed(1)}</span>
-                </Stack>
-            </Form.Group>
-            <Form.Group controlId="formGroupPitch">
-                <Form.Label>Pitch</Form.Label>
-                <Stack direction="horizontal">
-                    <Form.Range
-                        min="0"
-                        max="2000"
-                        value={Math.floor(pitch * 1000)}
-                        onChange={(e) =>
-                            onChange({ pitch: e.target.value / 1000 })
-                        }
-                        style={{ width: 300 }}
-                    />
-                    <span className="ms-1">{pitch?.toFixed(1)}</span>
-                </Stack>
-            </Form.Group>
-            <Form.Group controlId="formGroupVolume">
-                <Form.Label>Volume</Form.Label>
-                <Stack direction="horizontal">
-                    <Form.Range
-                        min="0"
-                        max="1000"
-                        value={Math.floor(volume * 1000)}
-                        onChange={(e) =>
-                            onChange({ volume: e.target.value / 1000 })
-                        }
-                        style={{ width: 300 }}
-                    />
-                    <span className="ms-1">{Math.floor(volume * 100)}</span>
-                </Stack>
-            </Form.Group>
-            <Button
-                type="button"
-                variant="danger"
-                onClick={props.onDelete}
-                style={{ marginRight: 8 }}
-            >
-                Delete
-            </Button>
-            <Button
-                type="button"
-                variant="secondary"
-                onClick={props.onCopy}
-                style={{ marginRight: 8 }}
-            >
-                Copy
-            </Button>
-            <Button
-                type="button"
-                variant="secondary"
-                onClick={props.onPaste}
-                disabled={!props.onPaste}
-                style={{ marginRight: 8 }}
-            >
-                Paste
-            </Button>
+                <Form.Group controlId="formGroupRate">
+                    <Form.Label>Rate</Form.Label>
+                    <Stack direction="horizontal">
+                        <Form.Range
+                            min="100"
+                            max="5000"
+                            value={Math.floor(rate * 1000)}
+                            onChange={(e) =>
+                                onChange({ rate: e.target.value / 1000 })
+                            }
+                            style={{ width: 300 }}
+                        />
+                        <span className="ms-1">{rate.toFixed(1)}</span>
+                    </Stack>
+                </Form.Group>
+                <Form.Group controlId="formGroupPitch">
+                    <Form.Label>Pitch</Form.Label>
+                    <Stack direction="horizontal">
+                        <Form.Range
+                            min="0"
+                            max="2000"
+                            value={Math.floor(pitch * 1000)}
+                            onChange={(e) =>
+                                onChange({ pitch: e.target.value / 1000 })
+                            }
+                            style={{ width: 300 }}
+                        />
+                        <span className="ms-1">{pitch?.toFixed(1)}</span>
+                    </Stack>
+                </Form.Group>
+                <Form.Group controlId="formGroupVolume">
+                    <Form.Label>Volume</Form.Label>
+                    <Stack direction="horizontal">
+                        <Form.Range
+                            min="0"
+                            max="1000"
+                            value={Math.floor(volume * 1000)}
+                            onChange={(e) =>
+                                onChange({ volume: e.target.value / 1000 })
+                            }
+                            style={{ width: 300 }}
+                        />
+                        <span className="ms-1">{Math.floor(volume * 100)}</span>
+                    </Stack>
+                </Form.Group>
+                <Button
+                    type="button"
+                    variant="danger"
+                    onClick={props.onDelete}
+                    style={{ marginRight: 8 }}
+                >
+                    Delete
+                </Button>
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={props.onCopy}
+                    style={{ marginRight: 8 }}
+                >
+                    Copy
+                </Button>
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={props.onPaste}
+                    disabled={!props.onPaste}
+                    style={{ marginRight: 8 }}
+                >
+                    Paste
+                </Button>
+            </details>
         </div>
     )
 }
@@ -168,7 +170,7 @@ export default function Announcer() {
                 }
             }
 
-            currentRef.current.timer = setTimeout(run, 200)
+            currentRef.current.timer = setTimeout(run, 5000)
         }
 
         run()
